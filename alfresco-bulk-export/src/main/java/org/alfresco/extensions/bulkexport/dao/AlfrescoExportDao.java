@@ -17,10 +17,12 @@
 package org.alfresco.extensions.bulkexport.dao;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.extensions.bulkexport.controler.Engine;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -165,6 +167,9 @@ public interface AlfrescoExportDao
      * @throws Exception
      */
     public Map<String,NodeRefRevision> getNodeRefHistory(String nodeRef) throws Exception;
+    
+    public List<NodeRef> getAllNodesForQuery(String query, Engine engine) throws IOException;
+    public String getPrefixPath(NodeRef nodeRef) throws Exception;
 }
 
 

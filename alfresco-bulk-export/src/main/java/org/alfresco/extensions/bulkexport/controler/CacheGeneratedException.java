@@ -21,11 +21,16 @@ package org.alfresco.extensions.bulkexport.controler;
  */
 public class CacheGeneratedException extends Exception
 {
+	private int nodeCount = -1;
     public CacheGeneratedException()
     {
 
     }
 
+    public CacheGeneratedException(String message, int nodeCount) {
+    	super(message);
+    	this.nodeCount = nodeCount;
+    }
     public CacheGeneratedException(String message)
     {
         super(message);
@@ -46,4 +51,12 @@ public class CacheGeneratedException extends Exception
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }
+
+	public int getNodeCount() {
+		return nodeCount;
+	}
+
+	public void setNodeCount(int nodeCount) {
+		this.nodeCount = nodeCount;
+	}
 }

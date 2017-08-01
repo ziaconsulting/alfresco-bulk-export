@@ -17,21 +17,26 @@
 package org.alfresco.extensions.bulkexport.dao;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Collection;
-import java.util.Iterator;
 
+import org.alfresco.extensions.bulkexport.controler.Engine;
+import org.alfresco.extensions.bulkexport.utils.ExportUtils;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.ActionModel;
 import org.alfresco.repo.publishing.PublishingModel;
+import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -42,17 +47,16 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.version.VersionService;
-import org.alfresco.service.cmr.version.VersionType;
-import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-
-import com.ibm.icu.text.SimpleDateFormat;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.ibm.icu.text.SimpleDateFormat;
 
 
 /**
@@ -92,7 +96,10 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             ContentModel.PROP_NODE_UUID, 
             ContentModel.PROP_CATEGORIES,
             ContentModel.PROP_CONTENT,
-            ContentModel.ASPECT_TAGGABLE
+            ContentModel.ASPECT_TAGGABLE,
+            ContentModel.PROP_VERSION_LABEL,
+            QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, VersionModel.PROP_VERSION_TYPE),
+            QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "lastThumbnailModification")
     };
     
     private String[] ignorePropertyPrefix = 
@@ -110,6 +117,11 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             ActionModel.TYPE_COMPOSITE_ACTION,
             PublishingModel.TYPE_PUBLISHING_QUEUE
     };
+    
+    private List<QName> ignoredAspects = Collections.unmodifiableList(
+    	new ArrayList<QName>() {{
+    		add(QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "thumbnailModification"));
+    	}});
     
     
     /**
@@ -331,6 +343,7 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
     public List<QName> getAspects(NodeRef nodeRef) throws Exception 
     {
         Set<QName> aspectSet = nodeService.getAspects(nodeRef);
+        aspectSet.removeAll(ignoredAspects);
         List<QName> qn = new ArrayList<QName>(aspectSet);
         
         return qn;
@@ -455,6 +468,14 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
         
         log.debug("isNodeIgnored got service type");
         return isTypeIgnored(value);
+    }
+    
+    public List<NodeRef> getAllNodesForQuery(String query, Engine engine) throws IOException {
+    	return ExportUtils.executeQuery(query, registry.getSearchService(), engine);
+    }
+    
+    public String getPrefixPath(NodeRef nodeRef) throws Exception {
+    	return nodeService.getPath(nodeRef).toPrefixString(registry.getNamespaceService());
     }
     
     // #######################################################################################
