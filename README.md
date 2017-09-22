@@ -51,5 +51,5 @@ log4j.logger.org.alfresco.extensions.bulkexport.Export=INFO
 
 # UI #
 The following UI was added to the project to help the user run an export without using curl commands
-![image](https://user-images.githubusercontent.com/11996632/30758005-f692142e-9f8d-11e7-9a41-cd677eb6d9f6.png)
+![image](https://user-images.githubusercontent.com/11996632/30759019-cb40fef8-9f91-11e7-9178-b35c088438b6.png)
 
