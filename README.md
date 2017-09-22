@@ -47,3 +47,8 @@ log4j.logger.org.alfresco.extensions.bulkexport.controler.Engine=INFO
 log4j.logger.org.alfresco.extensions.bulkexport.dao.AlfrescoExportDaoImpl=ERROR
 log4j.logger.org.alfresco.extensions.bulkexport.model.FileFolder=ERROR
 log4j.logger.org.alfresco.extensions.bulkexport.Export=INFO
+
+# UI #
+The following UI was added to the project to help the user run an export without using curl commands
+![image](https://user-images.githubusercontent.com/11996632/30758005-f692142e-9f8d-11e7-9a41-cd677eb6d9f6.png)
+
