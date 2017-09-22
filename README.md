@@ -15,7 +15,7 @@ Please make sure you are running a version of Alfresco that the tool has been de
 # Usage #
 This module is started by a simple webscript call. To initiate the exportation you just use this URL in a browser:
 
-http://{host}:{port}/alfresco/service/extensions/bulkexport/export?nodeRef={noderef}&base={base}&ignoreExported={ignoreExported?}&exportVersions=true&revisionHead=false&useNodeCache=true&
+http://{host}:{port}/alfresco/service/extensions/bulkexport/export?nodeRef={NodeRef}&base={base}&ignoreExported={ignoreExported?}&exportVersions={exportVersions}&revisionHead={revisionHead}&useNodeCache={useNodeCache}&cancel={cancel}
 
 where:
 * **{host}:** is the host of your instalation.
@@ -27,6 +27,7 @@ where:
 * exportVersion if true exports all revisions of a node - parameter **optional**, The default is _false_.
 * revisionHead if true (and exportVersion=true) then files are exported with head (latest) revision numbered, if set to false then the default numbering scheme used by the Alfresco Bulk Import tool is used (head revision is not numbered) - parameter **optional**, only used if exportVersion set, The default is _false_.
 * useNodeCache if true then a list of nodes to export is cached to the export area for future repeated use. Sometimes useful for large exports of data due to the transaction cache being full - parameter **optional**, The default is _false_.
+* **{cancel}:** is the job id that needs to be stopped. The job id will be the noderef of the folder or the start datetime.
 
 When the export is ended you will see in browser a message _"Process finished Successfully"_. Once this message is printed, look-up your content in the Alfresco Server in the {base} directory.
 

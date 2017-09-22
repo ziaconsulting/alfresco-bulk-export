@@ -1,7 +1,7 @@
 <webscript>
   <shortname>Bulk Export</shortname>
   <description>Export data as Bulk format</description>
-  <url>/extensions/bulkexport/export?nodeRef={NodeRef}&amp;base={base}&amp;ignoreExported={ignoreExported?}&amp;exportVersions={exportVersions}&amp;revisionHead={revisionHead}&amp;useNodeCache={useNodeCache}&amp;runningJobs={runningJobs}&amp;cancel={cancel}</url>
+  <url>/extensions/bulkexport/export?nodeRef={NodeRef}&amp;base={base}&amp;ignoreExported={ignoreExported?}&amp;exportVersions={exportVersions}&amp;revisionHead={revisionHead}&amp;useNodeCache={useNodeCache}&amp;cancel={cancel}</url>
   <authentication>admin</authentication>
   <transaction allow="readonly">required</transaction>
   <format default="html"></format>
