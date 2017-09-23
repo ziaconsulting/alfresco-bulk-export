@@ -27,7 +27,7 @@ where:
 * exportVersion if true exports all revisions of a node - parameter **optional**, The default is _false_.
 * revisionHead if true (and exportVersion=true) then files are exported with head (latest) revision numbered, if set to false then the default numbering scheme used by the Alfresco Bulk Import tool is used (head revision is not numbered) - parameter **optional**, only used if exportVersion set, The default is _false_.
 * useNodeCache if true then a list of nodes to export is cached to the export area for future repeated use. Sometimes useful for large exports of data due to the transaction cache being full - parameter **optional**, The default is _false_.
-* **{cancel}:** is the job id that needs to be stopped. The job id will be the noderef of the folder or the start datetime.
+* **{cancel}:** is the job id that needs to be stopped. The job id will be the noderef of the folder or the 'from date' value.
 
 When the export is ended you will see in browser a message _"Process finished Successfully"_. Once this message is printed, look-up your content in the Alfresco Server in the {base} directory.
 
@@ -53,3 +53,15 @@ log4j.logger.org.alfresco.extensions.bulkexport.Export=INFO
 The following UI was added to the project to help the user run an export without using curl commands
 ![image](https://user-images.githubusercontent.com/11996632/30759019-cb40fef8-9f91-11e7-9178-b35c088438b6.png)
 
+* Folder NodeRef: The noderef of the folder you would like to export. This field or the 'From Date' field is required
+* Output folder: The full folder path where the nodes will be exported
+* From Date: The nodes modifed after the given value will be exported. This field or the 'Folder Noderef' need to be provided. The date format example is 2017-03-01T00:00:00
+* To Date: The nodes modifed before the given value will be exported. The date format example is 2017-03-01T00:00:00
+* Add aspects: This is used to inject custom aspects to the exported nodes. You can specify multiple aspects like my:migrationAspect,my:testAspect. This is helpful if you want to keep track of nodes that are migrated by adding a custom aspect.
+* Add properties: Custom properties can be injected. Example: my:sourceSystem=testserver,my:sourceSystemName=cm:name
+* Update existing model data: Existing types, aspects and properties can be updated. Example: my:prop1=mynew:prop2,my:type1=mynew:type1
+* Update model prefix: The model prefixes can be updated. Example: oldprefix=newprefix,acme=newacme
+* Ignore Exported: Checked means existing files will not be replaced
+* Export Versions: Checked means all versions of the node will be exported
+* Revision Head: Checked and export version is set to true means the head version will be numbered. Unchecked results in the default numbering scheme
+* Use Node Cache: Checked means the list of nodes are cached to the 'Output Folder'. This is list will be used for export.
