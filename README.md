@@ -13,9 +13,16 @@ Please don't hesitate to contact the project owner if you'd like to contribute!
 Please make sure you are running a version of Alfresco that the tool has been developed for. As of the time of writing, the tool has been tested on alfresco 5.0, it should work on Alfresco v4.0+. The tool uses Java 1.7 features so will not work on versions of alfresco that do not support at least java 1.7.
 
 # Usage #
+Alfresco bulk export can be used using the the webscript UI or a webscript without a UI
+# Method 1 - UI webscript #
+The following URL can be used to access the UI webscript
+http://{host}:{port}/alfresco/service/extensions/bulkexport/export
 
-# Method 1 - UI #
-The following UI was added to the project to help the user run an export without using curl commands
+where:
+* **{host}:** is the host of your instalation.
+* **{port}:** is the port used by Alfresco.
+
+The UI should look as follows
 ![image](https://user-images.githubusercontent.com/11996632/30759019-cb40fef8-9f91-11e7-9178-b35c088438b6.png)
 
 * Folder NodeRef: The noderef of the folder you would like to export. This field or the 'From Date' field is required
