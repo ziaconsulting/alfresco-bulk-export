@@ -12,6 +12,15 @@ Please don't hesitate to contact the project owner if you'd like to contribute!
 # Prerequisites #
 Please make sure you are running a version of Alfresco that the tool has been developed for. As of the time of writing, the tool has been tested on alfresco 5.0, it should work on Alfresco v4.0+. The tool uses Java 1.7 features so will not work on versions of alfresco that do not support at least java 1.7.
 
+# Installation Steps #
+The following steps describe how to download and install the Alfresco Bulk Filesystem Import Tool:
+
+  1. Download the latest AMP file containing the tool from [Release](https://github.com/vprince1/alfresco-bulk-export/blob/master/alfresco-bulk-export/target/bulkexport-0.0.7.amp)
+  2. Shutdown your Alfresco instance
+  3. Make a backup of the original alfresco.war file. On Tomcat, this is located in ${ALFRESCO\_HOME}/tomcat/webapps
+  4. Use the Alfresco [Module Management Tool](http://wiki.alfresco.com/wiki/Module_Management_Tool) to install the AMP file obtained in step 1
+  5. Restart Alfresco, watching the log carefully for errors
+
 # Usage #
 Alfresco bulk export can be used using the the webscript UI or a webscript without a UI
 # Method 1 - UI webscript #
@@ -58,15 +67,6 @@ where:
 When the export is ended you will see in browser a message _"Process finished Successfully"_. Once this message is printed, look-up your content in the Alfresco Server in the {base} directory.
 
 The exporter will write progress to the Alfresco Log file as well as any issues it may have. Issues will also be reported on the web interface.
-
-# Installation Steps #
-The following steps describe how to download and install the Alfresco Bulk Filesystem Import Tool:
-
-  1. Download the latest AMP file containing the tool from [Release](https://github.com/gsdenys/alfresco-bulk-export/releases)
-  2. Shutdown your Alfresco instance
-  3. Make a backup of the original alfresco.war file. On Tomcat, this is located in ${ALFRESCO\_HOME}/tomcat/webapps
-  4. Use the Alfresco [Module Management Tool](http://wiki.alfresco.com/wiki/Module_Management_Tool) to install the AMP file obtained in step 1
-  5. Restart Alfresco, watching the log carefully for errors
 
 # Logging #
 The plugin uses the standard alfresco log4j mechanism, the following modules are configured in the amp to the following values:
