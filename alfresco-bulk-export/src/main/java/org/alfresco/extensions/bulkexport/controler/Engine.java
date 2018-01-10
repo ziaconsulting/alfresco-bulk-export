@@ -142,9 +142,9 @@ public class Engine
         if (nodes == null)
         {
             nodes = findAllNodes(nodeRef, fromDate, toDate);
-            storeNodeListToCache(cacheId, nodes);
             if (useNodeCache)
             {
+            		storeNodeListToCache(cacheId, nodes);
                 log.info("Generated Cached Node list");
                 log.info("Total Number of Nodes to Export: "+nodes.size());
                 throw new CacheGeneratedException("Generated Cached Node List Only", nodes.size());
@@ -171,9 +171,9 @@ public class Engine
         if (nodes == null)
         {
             nodes = findAllNodes(rootNode);
-            storeNodeListToCache(rootNode.getId(), nodes);
             if (useNodeCache)
             {
+            		storeNodeListToCache(rootNode.getId(), nodes);
                 log.info("Generated Cached Node list");
                 log.info("Total Number of Nodes to Export: "+nodes.size());
                 throw new CacheGeneratedException("Generated Cached Node List Only", nodes.size());
@@ -406,19 +406,19 @@ public class Engine
             if(this.dao.isFolder(nodeRef))
             {
                 this.createFolder(nodeRef);
-                this.storeCompletedNodeToCache(nodeRef);
+                if(this.useNodeCache) this.storeCompletedNodeToCache(nodeRef);
             } 
             else
             {
                 if (exportVersions)
                 {
                     exportFullRevisionHistory(nodeRef);
-                    this.storeCompletedNodeToCache(nodeRef);
+                    if(this.useNodeCache) this.storeCompletedNodeToCache(nodeRef);
                 }
                 else
                 {
                     exportHeadRevision(nodeRef);
-                    this.storeCompletedNodeToCache(nodeRef);
+                    if(this.useNodeCache) this.storeCompletedNodeToCache(nodeRef);
                 }
             }
             ExportUtils.logInBatch(availableNodesToExport.get(), "Remaining Parent Nodes to process: ");
