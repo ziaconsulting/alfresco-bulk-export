@@ -16,7 +16,7 @@
  */
 package org.alfresco.extensions.bulkexport;
 
-import java.io.IOException;
+import java.time.Duration;
 
 public class StopWatch 
 { 
@@ -29,6 +29,12 @@ public class StopWatch
     {
         long now = System.currentTimeMillis();
         return (now - startTime) / 1000;
+    }
+    
+    public Duration elapsedDuration() 
+    {
+        long now = System.currentTimeMillis();
+        return Duration.ofMillis(now - startTime);
     }
 
     private long startTime;

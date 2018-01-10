@@ -17,6 +17,9 @@
 package org.alfresco.extensions.bulkexport;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -224,8 +227,11 @@ public class Export extends DeclarativeWebScript
         sb.append("   bulk import revision scheme: " + !revisionHead +"\n");
         sb.append("   Use Node Cache : " + useNodeCache + "\n");
 
-        long duration = timer.elapsedTime();
-        sb.append("Export elapsed time: minutes:" + duration/60 + " , seconds: " + duration + "\n"); 
+        Duration duration = timer.elapsedDuration();
+        DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_TIME;
+        LocalTime nanoTime = LocalTime.ofNanoOfDay(duration.toNanos());
+        String timeTaken = nanoTime.format(df);
+        sb.append("Export elapsed time: " + timeTaken + "\n"); 
 
         log.info("Bulk Export finished");
 		Map<String, Object> model = new HashMap<String, Object>();
