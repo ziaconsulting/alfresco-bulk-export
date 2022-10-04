@@ -93,10 +93,13 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             "app"
     };
     
+    //SA 10/03/2022 Commented out ContentModel.PROP_NODE_UUID from this list as we need this to make sure we have the correct mapping between a document name and 
+    //its uuid. The name might not necessarily be unique but uuid would be.
+    //This is only so we can export from ldms to AoDocs
     private QName ignorePropertyQname[] = 
     { 
             ContentModel.PROP_NODE_DBID, 
-            ContentModel.PROP_NODE_UUID, 
+            //ContentModel.PROP_NODE_UUID, 
             ContentModel.PROP_CATEGORIES,
             ContentModel.PROP_CONTENT,
             ContentModel.ASPECT_TAGGABLE,
