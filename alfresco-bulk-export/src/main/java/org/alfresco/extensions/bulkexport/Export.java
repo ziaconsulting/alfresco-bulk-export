@@ -115,6 +115,13 @@ public class Export extends DeclarativeWebScript
         	jobId = fromDate;
         }
         
+        
+        Map<String, Object > runningJob = this.isJobRunning(jobId);
+        if (  runningJob.get(jobId) != null ) {
+        	log.debug ( "Job " + jobId + " is already running");
+        	return runningJob;
+        }
+        	
         if (req.getParameter("ignoreExported") != null)
         {
             if(req.getParameter("ignoreExported").equals("true")) 
@@ -262,6 +269,15 @@ public class Export extends DeclarativeWebScript
 		}
 	    return model;
 	}
+	public Map<String, Object> isJobRunning(String jobId) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		Engine eng = runningExports.get(jobId);
+		if ( eng != null )
+			model.put(jobId, "Already running");
+		
+		return model;
+	}
+	
 	public Map<String, Object> cancelExport(String jobId) {
 		Engine runningEngine = runningExports.get(jobId);
 		Map<String, Object> model = new HashMap<String, Object>();
