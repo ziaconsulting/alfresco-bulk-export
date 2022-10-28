@@ -36,7 +36,10 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.lang.StringUtils;
+//
+//SA 09/22/2022 This class can't be found in alf 7.2 install. It's only used on one line to check isEmpty
+//replace it with null and empty string check
+//import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -389,7 +392,9 @@ public class FileFolder
             String key = string;
             String value = properties.get(key);
             
-            if(isInvalidEmptyType(key, value) || StringUtils.isEmpty(value)) {
+	    //SA 09/22/22 StringUtils class has been removed and when we run the export module, it throws NoClassDefn .....Exception
+            //if(isInvalidEmptyType(key, value) || StringUtils.isEmpty(value)) {
+            if(isInvalidEmptyType(key, value) || value == null || value.length() == 0) {
             	continue;
             }
            

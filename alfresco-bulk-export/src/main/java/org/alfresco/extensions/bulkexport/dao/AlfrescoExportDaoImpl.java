@@ -35,7 +35,10 @@ import org.alfresco.extensions.bulkexport.controler.Engine;
 import org.alfresco.extensions.bulkexport.utils.ExportUtils;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.ActionModel;
-import org.alfresco.repo.publishing.PublishingModel;
+//SA 9/22/2022 PublishingModel not found in alfresco 7.2, comments it out.
+////It throws A NoClassDefinitionFound at run time when the export module is executed.
+//
+//import org.alfresco.repo.publishing.PublishingModel;
 import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -90,10 +93,13 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             "app"
     };
     
+    //SA 10/03/2022 Commented out ContentModel.PROP_NODE_UUID from this list as we need this to make sure we have the correct mapping between a document name and 
+    //its uuid. The name might not necessarily be unique but uuid would be.
+    //This is only so we can export from ldms to AoDocs
     private QName ignorePropertyQname[] = 
     { 
             ContentModel.PROP_NODE_DBID, 
-            ContentModel.PROP_NODE_UUID, 
+            //ContentModel.PROP_NODE_UUID, 
             ContentModel.PROP_CATEGORIES,
             ContentModel.PROP_CONTENT,
             ContentModel.ASPECT_TAGGABLE,
@@ -108,14 +114,16 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             "exif"
     };
     
+//SA 9/22/2022 PublishingModel not found in alfresco 7.2, comments it out.
+//It throws A NoClassDefinitionFound at run time when the export module is executed.
     private QName[] ignoredType = 
     {
             ContentModel.TYPE_SYSTEM_FOLDER,
             ContentModel.TYPE_LINK,
             ContentModel.TYPE_RATING,
             ActionModel.TYPE_ACTION,
-            ActionModel.TYPE_COMPOSITE_ACTION,
-            PublishingModel.TYPE_PUBLISHING_QUEUE
+            ActionModel.TYPE_COMPOSITE_ACTION
+            //,PublishingModel.TYPE_PUBLISHING_QUEUE
     };
     
     private List<QName> ignoredAspects = Collections.unmodifiableList(
