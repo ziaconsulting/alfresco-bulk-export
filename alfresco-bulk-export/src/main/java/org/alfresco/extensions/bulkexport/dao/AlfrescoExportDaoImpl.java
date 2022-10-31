@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,6 +46,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -315,10 +318,38 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             return false;
         }
        
+        /*
+         * SA 10/30/22, if content is empty, meaning somehow the *.bin is missing. 
+         * Catch the exception and log the error and create a 0 byte file 
+         */
         File output = new File(outputFileName);
-        reader.getContent(output);
+        
+        try {
+        	log.debug("Before getting content for file " + nodeService.getProperties(nodeRef).get(ContentModel.PROP_CONTENT));
+        	reader.getContent(output);
+        }
+        catch ( ContentIOException ex ) {
+        	log.debug(ex);
+        	log.error(ex);
+        	writeZeroBytes(outputFileName);
+        	
+        }
 
         return true;
+    }
+
+    //SA 10/30/22 It will happen that some bin files will go missing.
+    //If this happens write a 0 bytes file and continue exporting.
+    private void writeZeroBytes(String outputFileName) throws Exception {
+        try {
+        	
+        	String emptyString  = "";
+        	log.debug("Writing 0 byyes file to " + outputFileName);
+            Files.write(Paths.get(outputFileName), emptyString.getBytes());
+        	log.debug("Successfully wrote 0 byes file to " + outputFileName);
+        } catch (IOException e) {
+            throw new Exception(e);
+        }    	
     }
     
     /**
