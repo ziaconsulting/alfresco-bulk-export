@@ -270,10 +270,15 @@ public class Export extends DeclarativeWebScript
 	    return model;
 	}
 	public Map<String, Object> isJobRunning(String jobId) {
+		log.debug("Checking if job with jobId " + jobId + " is running.");
 		Map<String, Object> model = new HashMap<String, Object>();
 		Engine eng = runningExports.get(jobId);
-		if ( eng != null )
+		if ( eng != null ) {
+			log.debug("Job with id " + jobId + " Running");
 			model.put(jobId, "Already running");
+		}
+		else
+			log.debug("Job with id " + jobId + " not running");
 		
 		return model;
 	}

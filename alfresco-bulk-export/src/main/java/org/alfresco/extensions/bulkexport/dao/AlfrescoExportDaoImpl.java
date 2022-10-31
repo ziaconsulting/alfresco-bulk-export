@@ -344,7 +344,7 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
         try {
         	
         	String emptyString  = "";
-        	log.debug("Writing 0 byyes file to " + outputFileName);
+        	log.debug("Writing 0 byes file to " + outputFileName);
             Files.write(Paths.get(outputFileName), emptyString.getBytes());
         	log.debug("Successfully wrote 0 byes file to " + outputFileName);
         } catch (IOException e) {
