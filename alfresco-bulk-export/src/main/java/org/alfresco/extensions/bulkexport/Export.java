@@ -269,6 +269,15 @@ public class Export extends DeclarativeWebScript
 		}
 	    return model;
 	}
+	
+	//SA 10/28/22 : Added this method to check if the passed jobId is already in progress.
+	//jobId is stored in a map of runningExports object.
+	//This module seems to have been written with only one job per export in mind per server
+	//This I assume looking at the function updateModel being called from cancelExport written by the original author
+	//model.put("jobs", Collections.list(runningExports.keys()).get(0));
+	//The line above suggests that "job" key will only store the first job.
+	//Trying to keep my changes to the minimum.
+	//I check for the job in runningExports and if it is, return the progress using updateModel function
 	public Map<String, Object> isJobRunning(String jobId) {
 		log.debug("Checking if job with jobId " + jobId + " is running.");
 		Map<String, Object> model = new HashMap<String, Object>();

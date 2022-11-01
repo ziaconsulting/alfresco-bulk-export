@@ -106,6 +106,8 @@
 					document.getElementById("exportOutput").innerHTML = "Unexpected Error on cancel:"+error;
 				});
       		}
+      		
+      		//SA 11/1/222 I added a check to check for valid data and it's subelements on return of GET
       		function exportJob() {
       	 		var xhr = new XMLHttpRequest();
       	 		var noderef = document.getElementById("nodeRef").value;
