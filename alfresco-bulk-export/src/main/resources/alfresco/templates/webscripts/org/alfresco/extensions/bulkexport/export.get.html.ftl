@@ -124,14 +124,19 @@
       	 		var usenodecache = document.getElementById("useNodeCache").checked;
          		var exportJsonUrl = '${url.service}?format=json&nodeRef='+noderef+'&aspects='+aspects+'&properties='+properties+'&updateTypesOrAspectsOrProperties='+updateTypesOrAspectsOrProperties+'&updateModelPrefix='+updateModelPrefix+'&fromDate='+fromDate+'&toDate='+toDate+'&base='+base+'&ignoreExported='+ignoreexported+'&exportVersions='+exportversions+'&revisionHead='+revisionhead+'&useNodeCache='+usenodecache;
 				$.getJSON(exportJsonUrl, function(data) {
-					var outputHtml = data.output.replace(/(?:\\r\\n|\\r|\\n)/g, '<br />');
-	   				document.getElementById("exportOutput").innerHTML = outputHtml;
-	   				if ( data && data.totalNodesToExport )
+					if ( ! data ) 
+						return;
+					
+					if ( data.output ) {	
+						var outputHtml = data.output.replace(/(?:\\r\\n|\\r|\\n)/g, '<br />');
+	   					document.getElementById("exportOutput").innerHTML = outputHtml;
+	   				}
+	   				if ( data.totalNodesToExport )
       					$('#totalNodesToExport').html(data.totalNodesToExport);
-      				if ( data && data.availableNodesToExport )
-      					$('#availableNodesToExport').html(data.availableNodesToExport);
-      				if ( data && data.previouslyExportedNodes )
-      					$('#previouslyExportedNodes').html(data.previouslyExportedNodes);
+					if ( data.availableNodesToExport )
+						$('#availableNodesToExport').html(data.availableNodesToExport);
+					if ( data.previouslyExportedNodes )
+						$('#previouslyExportedNodes').html(data.previouslyExportedNodes);
 				})
 				.fail(function(jqxhr, textStatus, error) {
 					document.getElementById("exportOutput").innerHTML = "Unexpected Error on export:"+error;
