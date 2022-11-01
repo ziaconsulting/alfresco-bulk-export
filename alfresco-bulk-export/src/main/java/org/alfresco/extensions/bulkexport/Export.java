@@ -116,10 +116,9 @@ public class Export extends DeclarativeWebScript
         }
         
         
-        Map<String, Object > runningJob = this.isJobRunning(jobId);
-        if (  runningJob.get(jobId) != null ) {
+        if (  this.runningExports.size() > 0 && this.runningExports.get(jobId) != null ) {
         	log.debug ( "Job " + jobId + " is already running");
-        	return runningJob;
+        	return this.getRunningExports();
         }
         	
         if (req.getParameter("ignoreExported") != null)
