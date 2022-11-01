@@ -48,7 +48,7 @@
 			    visibility: visible;
 			}
    		</style>
-   		<script src="http://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+   		<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
    		<script>
    			var jobsStatusMonitor;
    			var job;
@@ -124,9 +124,12 @@
 				$.getJSON(exportJsonUrl, function(data) {
 					var outputHtml = data.output.replace(/(?:\\r\\n|\\r|\\n)/g, '<br />');
 	   				document.getElementById("exportOutput").innerHTML = outputHtml;
-      				$('#totalNodesToExport').html(data.totalNodesToExport);
-      				$('#availableNodesToExport').html(data.availableNodesToExport);
-      				$('#previouslyExportedNodes').html(data.previouslyExportedNodes);
+	   				if ( data && data.totalNodesToExport )
+      					$('#totalNodesToExport').html(data.totalNodesToExport);
+      				if ( data && data.availableNodesToExport )
+      					$('#availableNodesToExport').html(data.availableNodesToExport);
+      				if ( data && data.previouslyExportedNodes )
+      					$('#previouslyExportedNodes').html(data.previouslyExportedNodes);
 				})
 				.fail(function(jqxhr, textStatus, error) {
 					document.getElementById("exportOutput").innerHTML = "Unexpected Error on export:"+error;

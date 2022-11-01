@@ -276,6 +276,7 @@ public class Export extends DeclarativeWebScript
 		if ( eng != null ) {
 			log.debug("Job with id " + jobId + " Running");
 			model.put(jobId, "Already running");
+			updateModel(model);
 		}
 		else
 			log.debug("Job with id " + jobId + " not running");
