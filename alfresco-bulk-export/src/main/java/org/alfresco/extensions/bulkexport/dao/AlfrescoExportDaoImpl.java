@@ -104,7 +104,7 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             ContentModel.PROP_NODE_DBID, 
             //ContentModel.PROP_NODE_UUID, 
             ContentModel.PROP_CATEGORIES,
-            ContentModel.PROP_CONTENT,
+            //ContentModel.PROP_CONTENT,
             ContentModel.ASPECT_TAGGABLE,
             ContentModel.PROP_VERSION_LABEL,
             QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, VersionModel.PROP_VERSION_TYPE),

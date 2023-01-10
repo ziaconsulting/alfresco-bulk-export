@@ -117,7 +117,7 @@ public class Export extends DeclarativeWebScript
         
         
         if (  this.runningExports.size() > 0 && this.runningExports.get(jobId) != null ) {
-        	log.debug ( "Job " + jobId + " is already running");
+        	log.info ( "Job with " + jobId + " is already running");
         	return this.getRunningExports();
         }
         	
@@ -283,7 +283,7 @@ public class Export extends DeclarativeWebScript
 		Engine eng = runningExports.get(jobId);
 		if ( eng != null ) {
 			log.debug("Job with id " + jobId + " Running");
-			model.put(jobId, "Already running");
+			model.put("output", jobId + "already running");
 			updateModel(model);
 		}
 		else
