@@ -88,7 +88,7 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
         
     private QName ignoreAspectQname[] = 
     {
-            ContentModel.ASPECT_TAGGABLE
+            //ContentModel.ASPECT_TAGGABLE
     };
     
     private String ignoreAspectPrefix[] = 
@@ -100,13 +100,14 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
     //its uuid. The name might not necessarily be unique but uuid would be.
     //This is only so we can export from ldms to AoDocs
     //SA 01/016/23 Commented out PROP_CONTENT so that the content_url with its various fields get exported.
+    //Commented out ASPECT_TAGGABLE
     private QName ignorePropertyQname[] = 
     { 
             ContentModel.PROP_NODE_DBID, 
             //ContentModel.PROP_NODE_UUID, 
             ContentModel.PROP_CATEGORIES,
             //ContentModel.PROP_CONTENT,
-            ContentModel.ASPECT_TAGGABLE,
+            //ContentModel.ASPECT_TAGGABLE,
             ContentModel.PROP_VERSION_LABEL,
             QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, VersionModel.PROP_VERSION_TYPE),
             QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "lastThumbnailModification")
