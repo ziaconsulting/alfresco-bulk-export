@@ -63,6 +63,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ibm.icu.text.SimpleDateFormat;
+import org.w3c.dom.Node;
 
 
 /**
@@ -111,6 +112,7 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             ContentModel.PROP_VERSION_LABEL,
             QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, VersionModel.PROP_VERSION_TYPE),
             QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "lastThumbnailModification")
+
     };
     
     private String[] ignorePropertyPrefix = 
@@ -188,7 +190,9 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             Serializable obj = properties.get(qName);
             String name = this.getQnameStringFormat(qName);
             String value = this.formatMetadata(obj);
-        
+            //SA 01/18/2023 Tags are returned in an ArrayList of noderefs
+            if ( qName.equals(ContentModel.ASPECT_TAGGABLE))
+                value = get_tagged_names_as_string((ArrayList<NodeRef>)obj);
             //put key value in the property list as <prefixOfProperty:nameOfProperty, valueOfProperty>
             props.put(name, value);
         }
@@ -196,7 +200,18 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
         return props;
     }
 
-    
+    //From an arraylist of noderefs, returns names of tags as string ['foo','bar']
+    private String get_tagged_names_as_string(ArrayList<NodeRef> tag_list) {
+        if ( tag_list == null )
+            return "";
+
+        ArrayList<String> values = new ArrayList<String>();
+        for( NodeRef tag : tag_list) {
+            String name = (String)nodeService.getProperty(tag, ContentModel.PROP_NAME);
+            values.add(name);
+        }
+        return values.toString();
+    }
     /**
      * @see com.alfresco.bulkexport.dao.AlfrescoExportDao#getChildren(java.lang.String)
      */
