@@ -63,6 +63,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ibm.icu.text.SimpleDateFormat;
+import com.google.gson.Gson;
 import org.w3c.dom.Node;
 
 
@@ -652,13 +653,21 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
         {
             if(obj instanceof Date)
             {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
+                //SA 06/27/2023 date format was incorrect  ("yyyy-MM-dd'T'hh:mm:ss.SSSZ")
+                //This produces date that is 12 hours behind the passed date.
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:MM:ss.SSSZ");
                 
                 Date date = (Date) obj;
                 returnValue = format.format(date);
                 returnValue = returnValue.substring(0, 26) + ":" + returnValue.substring(26);
-            } 
-            else 
+            }
+            //SA 06/27/2023 --export an array list as a string version of jsonobject
+            else if (obj instanceof ArrayList) {
+                ArrayList obj_list = (ArrayList)obj;
+
+                returnValue = new Gson().toJson(obj_list);
+            }
+            else
             {
                 
                 //
