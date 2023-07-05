@@ -74,3 +74,8 @@ log4j.logger.org.alfresco.extensions.bulkexport.controler.Engine=INFO
 log4j.logger.org.alfresco.extensions.bulkexport.dao.AlfrescoExportDaoImpl=ERROR
 log4j.logger.org.alfresco.extensions.bulkexport.model.FileFolder=ERROR
 log4j.logger.org.alfresco.extensions.bulkexport.Export=INFO
+
+
+#SA 7/5/2023
+We modified the exporting logic for fields with multivalues to export as a JSON array to take care of escaping any special characters including commas.
+

@@ -115,6 +115,12 @@ public class Export extends DeclarativeWebScript
         	jobId = fromDate;
         }
         
+        
+        if (  this.runningExports.size() > 0 && this.runningExports.get(jobId) != null ) {
+        	log.info ( "Job with " + jobId + " is already running");
+        	return this.getRunningExports();
+        }
+        	
         if (req.getParameter("ignoreExported") != null)
         {
             if(req.getParameter("ignoreExported").equals("true")) 
@@ -262,6 +268,30 @@ public class Export extends DeclarativeWebScript
 		}
 	    return model;
 	}
+	
+	//SA 10/28/22 : Added this method to check if the passed jobId is already in progress.
+	//jobId is stored in a map of runningExports object.
+	//This module seems to have been written with only one job per export in mind per server
+	//This I assume looking at the function updateModel being called from cancelExport written by the original author
+	//model.put("jobs", Collections.list(runningExports.keys()).get(0));
+	//The line above suggests that "job" key will only store the first job.
+	//Trying to keep my changes to the minimum.
+	//I check for the job in runningExports and if it is, return the progress using updateModel function
+	public Map<String, Object> isJobRunning(String jobId) {
+		log.debug("Checking if job with jobId " + jobId + " is running.");
+		Map<String, Object> model = new HashMap<String, Object>();
+		Engine eng = runningExports.get(jobId);
+		if ( eng != null ) {
+			log.debug("Job with id " + jobId + " Running");
+			model.put("output", jobId + "already running");
+			updateModel(model);
+		}
+		else
+			log.debug("Job with id " + jobId + " not running");
+		
+		return model;
+	}
+	
 	public Map<String, Object> cancelExport(String jobId) {
 		Engine runningEngine = runningExports.get(jobId);
 		Map<String, Object> model = new HashMap<String, Object>();

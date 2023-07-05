@@ -21,6 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,6 +48,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -60,6 +65,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ibm.icu.text.SimpleDateFormat;
+import com.google.gson.Gson;
+import org.w3c.dom.Node;
 
 
 /**
@@ -85,7 +92,7 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
         
     private QName ignoreAspectQname[] = 
     {
-            ContentModel.ASPECT_TAGGABLE
+            //ContentModel.ASPECT_TAGGABLE
     };
     
     private String ignoreAspectPrefix[] = 
@@ -96,16 +103,19 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
     //SA 10/03/2022 Commented out ContentModel.PROP_NODE_UUID from this list as we need this to make sure we have the correct mapping between a document name and 
     //its uuid. The name might not necessarily be unique but uuid would be.
     //This is only so we can export from ldms to AoDocs
+    //SA 01/016/23 Commented out PROP_CONTENT so that the content_url with its various fields get exported.
+    //Commented out ASPECT_TAGGABLE
     private QName ignorePropertyQname[] = 
     { 
             ContentModel.PROP_NODE_DBID, 
             //ContentModel.PROP_NODE_UUID, 
             ContentModel.PROP_CATEGORIES,
-            ContentModel.PROP_CONTENT,
-            ContentModel.ASPECT_TAGGABLE,
+            //ContentModel.PROP_CONTENT,
+            //ContentModel.ASPECT_TAGGABLE,
             ContentModel.PROP_VERSION_LABEL,
             QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, VersionModel.PROP_VERSION_TYPE),
             QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "lastThumbnailModification")
+
     };
     
     private String[] ignorePropertyPrefix = 
@@ -183,7 +193,9 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             Serializable obj = properties.get(qName);
             String name = this.getQnameStringFormat(qName);
             String value = this.formatMetadata(obj);
-        
+            //SA 01/18/2023 Tags are returned in an ArrayList of noderefs
+            if ( qName.equals(ContentModel.ASPECT_TAGGABLE))
+                value = get_tagged_names_as_string((ArrayList<NodeRef>)obj);
             //put key value in the property list as <prefixOfProperty:nameOfProperty, valueOfProperty>
             props.put(name, value);
         }
@@ -191,7 +203,18 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
         return props;
     }
 
-    
+    //From an arraylist of noderefs, returns names of tags as string ['foo','bar']
+    private String get_tagged_names_as_string(ArrayList<NodeRef> tag_list) {
+        if ( tag_list == null )
+            return "";
+
+        ArrayList<String> values = new ArrayList<String>();
+        for( NodeRef tag : tag_list) {
+            String name = (String)nodeService.getProperty(tag, ContentModel.PROP_NAME);
+            values.add(name);
+        }
+        return values.toString();
+    }
     /**
      * @see com.alfresco.bulkexport.dao.AlfrescoExportDao#getChildren(java.lang.String)
      */
@@ -315,10 +338,38 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             return false;
         }
        
+        /*
+         * SA 10/30/22, if content is empty, meaning somehow the *.bin is missing. 
+         * Catch the exception and log the error and create a 0 byte file 
+         */
         File output = new File(outputFileName);
-        reader.getContent(output);
+        
+        try {
+        	log.debug("Before getting content for file " + nodeService.getProperties(nodeRef).get(ContentModel.PROP_CONTENT));
+        	reader.getContent(output);
+        }
+        catch ( ContentIOException ex ) {
+        	log.debug(ex);
+        	log.error(ex);
+        	writeZeroBytes(outputFileName);
+        	
+        }
 
         return true;
+    }
+
+    //SA 10/30/22 It will happen that some bin files will go missing.
+    //If this happens write a 0 bytes file and continue exporting.
+    private void writeZeroBytes(String outputFileName) throws Exception {
+        try {
+        	
+        	String emptyString  = "";
+        	log.debug("Writing 0 byes file to " + outputFileName);
+            Files.write(Paths.get(outputFileName), emptyString.getBytes());
+        	log.debug("Successfully wrote 0 byes file to " + outputFileName);
+        } catch (IOException e) {
+            throw new Exception(e);
+        }    	
     }
     
     /**
@@ -604,13 +655,22 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
         {
             if(obj instanceof Date)
             {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
-                
+                //SA 06/27/2023 date format was incorrect  ("yyyy-MM-dd'T'hh:mm:ss.SSSZ")
+                //This produces date that is 12 hours behind the passed date.
+                //Removed SimpleDateFormat with DateTimeFormatter
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC);
                 Date date = (Date) obj;
-                returnValue = format.format(date);
-                returnValue = returnValue.substring(0, 26) + ":" + returnValue.substring(26);
-            } 
-            else 
+                returnValue = formatter.format(date.toInstant());
+            }
+            //SA 06/27/2023 --export an array list as a string of jsonobject
+            //Original code was exporting array values as string values separated by comma
+            //This doesn't work when there is a comma in the data
+            else if (obj instanceof ArrayList) {
+                ArrayList obj_list = (ArrayList)obj;
+
+                returnValue = new Gson().toJson(obj_list);
+            }
+            else
             {
                 
                 //

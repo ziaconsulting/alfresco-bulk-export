@@ -48,7 +48,7 @@
 			    visibility: visible;
 			}
    		</style>
-   		<script src="http://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+   		<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
    		<script>
    			var jobsStatusMonitor;
    			var job;
@@ -106,6 +106,8 @@
 					document.getElementById("exportOutput").innerHTML = "Unexpected Error on cancel:"+error;
 				});
       		}
+      		
+      		//SA 11/1/222 I added a check to check for valid data and it's subelements on return of GET
       		function exportJob() {
       	 		var xhr = new XMLHttpRequest();
       	 		var noderef = document.getElementById("nodeRef").value;
@@ -122,11 +124,19 @@
       	 		var usenodecache = document.getElementById("useNodeCache").checked;
          		var exportJsonUrl = '${url.service}?format=json&nodeRef='+noderef+'&aspects='+aspects+'&properties='+properties+'&updateTypesOrAspectsOrProperties='+updateTypesOrAspectsOrProperties+'&updateModelPrefix='+updateModelPrefix+'&fromDate='+fromDate+'&toDate='+toDate+'&base='+base+'&ignoreExported='+ignoreexported+'&exportVersions='+exportversions+'&revisionHead='+revisionhead+'&useNodeCache='+usenodecache;
 				$.getJSON(exportJsonUrl, function(data) {
-					var outputHtml = data.output.replace(/(?:\\r\\n|\\r|\\n)/g, '<br />');
-	   				document.getElementById("exportOutput").innerHTML = outputHtml;
-      				$('#totalNodesToExport').html(data.totalNodesToExport);
-      				$('#availableNodesToExport').html(data.availableNodesToExport);
-      				$('#previouslyExportedNodes').html(data.previouslyExportedNodes);
+					if ( ! data ) 
+						return;
+					
+					if ( data.output ) {	
+						var outputHtml = data.output.replace(/(?:\\r\\n|\\r|\\n)/g, '<br />');
+	   					document.getElementById("exportOutput").innerHTML = outputHtml;
+	   				}
+	   				if ( data.totalNodesToExport )
+      					$('#totalNodesToExport').html(data.totalNodesToExport);
+					if ( data.availableNodesToExport )
+						$('#availableNodesToExport').html(data.availableNodesToExport);
+					if ( data.previouslyExportedNodes )
+						$('#previouslyExportedNodes').html(data.previouslyExportedNodes);
 				})
 				.fail(function(jqxhr, textStatus, error) {
 					document.getElementById("exportOutput").innerHTML = "Unexpected Error on export:"+error;
