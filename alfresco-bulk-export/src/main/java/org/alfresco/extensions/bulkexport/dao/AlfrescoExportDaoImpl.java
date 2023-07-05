@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -655,13 +657,14 @@ public class AlfrescoExportDaoImpl implements AlfrescoExportDao
             {
                 //SA 06/27/2023 date format was incorrect  ("yyyy-MM-dd'T'hh:mm:ss.SSSZ")
                 //This produces date that is 12 hours behind the passed date.
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:MM:ss.SSSZ");
-                
+                //Removed SimpleDateFormat with DateTimeFormatter
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC);
                 Date date = (Date) obj;
-                returnValue = format.format(date);
-                returnValue = returnValue.substring(0, 26) + ":" + returnValue.substring(26);
+                returnValue = formatter.format(date.toInstant());
             }
-            //SA 06/27/2023 --export an array list as a string version of jsonobject
+            //SA 06/27/2023 --export an array list as a string of jsonobject
+            //Original code was exporting array values as string values separated by comma
+            //This doesn't work when there is a comma in the data
             else if (obj instanceof ArrayList) {
                 ArrayList obj_list = (ArrayList)obj;
 
